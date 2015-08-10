@@ -1,0 +1,11 @@
+<ion-view>
+	<ion-nav-title>Liste des villes</ion-nav-title>
+	<ion-nav-buttons side="primary">
+      <a class="button ion-chevron-left" nav-direction="back" href="#/country">Back</a>
+    </ion-nav-buttons>
+	<ion-content>
+		<ion-list  show-delete="true" type="list-inset">
+			<ion-item ng-repeat="city in cities = favoryService.allCities()">{{city.label}}<span class="badge badge-assertive">{{favoryService.getNbFavoryByCity(city.code)}}</span></ion-item>			
+		</ion-list>	
+	</ion-content>
+</ion-view>
