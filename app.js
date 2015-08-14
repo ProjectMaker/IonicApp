@@ -15,7 +15,6 @@ app.factory('favoryService', function() {
 	return {
 		all: function() { return countries; },
 		allCities: function() {
-			console.log('allcities');
 			return cities;
 		},
 		
@@ -47,7 +46,24 @@ app.controller('MenuNavBarCtrl',
 	}
 ]);
 
-
+app.controller('TabsFavoryCtrl',
+		["$scope",
+		 "$rootScope",
+		 "$state",
+		 "$location",
+	function($scope,$rootScope,$state,$location) {
+		$scope.disabledBack = function() { 
+			if ( ['/favory/localisation','/favory/event'].indexOf($location.path()) >= 0 ) return true;
+			
+			return false;
+		}
+		
+		$scope.goBack = function() {
+			if ( $rootScope.regex.pathFavoryCityGoBack.test($location.path()) )
+				$state.go('favory.localisation');
+		}
+	}
+]);
 app.controller('CountryCtrl', 
 		["$scope",
 		 "favoryService", 
@@ -66,40 +82,67 @@ app.controller('CityCtrl',
 	}
 ]);
 
-app.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
-    if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleLightContent();
-    }
-  });
+app.run(function($ionicPlatform, $rootScope) {
+	$ionicPlatform.ready(function() {
+	    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+	    // for form inputs)
+	    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+	      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+	    }
+	    if (window.StatusBar) {
+	      // org.apache.cordova.statusbar required
+	      StatusBar.styleLightContent();
+	    }
+	});
+  
+	$rootScope.regex = {
+		pathFavoryCityGoBack: new RegExp(/favory\/localisation\/[a-z0-9]+\/city/i)	
+			  
+	}
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
-	$urlRouterProvider.otherwise('/country');
+	$urlRouterProvider.otherwise('/favory/localisation');
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
   // Set up the various states which the app can be in.
   // Each state's controller can be found in controllers.js
   $stateProvider
 
-  .state('country', {
-    	url: '/country',
-    	templateUrl: 'templates/country.html',
-    	controller: 'CountryCtrl'
+  .state('favory', {
+    	url: '/favory',
+    	templateUrl: 'templates/tabs-favory.html',
+    	controller: 'TabsFavoryCtrl',
+    	abstract: true
     })
-  
-  	.state('countrycity', {
-    	url: '/country/:code/city',
-    	templateUrl: 'templates/city.html',
-    	controller: 'CityCtrl'
+    .state('favory.localisation', {
+    	url: '/localisation',
+    	views: {
+    		'favory-localisation': {
+    			templateUrl: 'templates/country.html',
+    			controller: 'CountryCtrl'
+    		}
+    	}
     })
-    
+  	.state('favory.localisation-city', {
+    	url: '/localisation/:code/city',
+    	views: {
+  			'favory-localisation': {
+		  		templateUrl: 'templates/city.html',
+		    	controller: 'CityCtrl'
+  			}
+  		}
+    	
+    })
+    .state('favory.event', {
+    	url: '/event',
+    	views: {
+  			'favory-event': {
+		  		templateUrl: 'templates/form-favory.html'
+  			}
+  		}
+    	
+    })
     .state('favoryform', {
     	url: '/favory/form',
     	templateUrl: 'templates/form-favory.html'

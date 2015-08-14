@@ -2,8 +2,9 @@
 	<ion-nav-title>Liste des pays</ion-nav-title>
 	
 	<ion-content>
-		<ion-list class="list" type="list-inset">
-			<ion-item href="#/country/{{country.label}}/city" ng-repeat="country in countries = favoryService.all()">{{country.label}} <span class="badge badge-assertive"  >{{favoryService.getNbFavoryByCountry(country.code)}}</span></ion-item>			
+		<ion-list class="list" type="list-inset" nav-direction="forward">
+			<ion-item ui-sref="favory.localisation-city({code: country.label})" ng-repeat="country in countries = favoryService.all()">{{country.label}} <span class="badge badge-assertive"  >{{favoryService.getNbFavoryByCountry(country.code)}}</span></ion-item>			
 		</ion-list>	
 	</ion-content>
+	
 </ion-view>
